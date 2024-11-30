@@ -1,0 +1,79 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn 
+import warnings
+warnings.filterwarnings('ignore')
+
+def load_data(file_path):
+    :param file_path: Path to the data file.
+    :return: pandas DataFrame
+    """
+    data = pd.read_csv(file_path)
+    print("Data loaded successfully!")
+    return data file.
+def explore_data(data):
+    :param data: pandas DataFrame
+  
+    print("\n--- Data Overview ---")
+    print(data.head())
+    
+    print("\n--- Data Info ---")
+    print(data.info())
+    
+    print("\n--- Summary Statistics ---")
+    print(data.describe())
+
+def basic_analysis(data):
+    
+    :param data: pandas DataFrame
+    
+    print("\n--- Missing Values ---")
+    print(data.isnull().sum())
+    
+    print("\n--- Unique Values in Each Column ---")
+    for column in data.columns:
+        print(f"{column}: {data[column].nunique()} unique values")
+def create_visualizations(data):
+    
+    :param data: pandas DataFrame
+  
+    
+    numeric_columns = data.select_dtypes(include=np.number).columns
+    data[numeric_columns].hist(bins=30, figsize=(10, 8), color='skyblue')
+    plt.suptitle('Distribution of Numerical Features')
+    plt.show()
+    if len(numeric_columns) > 1:
+        plt.figure(figsize=(10, 6))
+        sns.heatmap(data[numeric_columns].corr(), annot=True, cmap='coolwarm', fmt='.2f')
+        plt.title('Correlation Heatmap')
+        plt.show()
+    categorical_columns = data.select_dtypes(include='object').columns
+    for column in categorical_columns:
+        plt.figure(figsize=(8, 4))
+        sns.countplot(x=column, data=data, palette='viridis')
+        plt.title(f'Distribution of {column}')
+        plt.xticks(rotation=45)
+      
+def print_findings(data):
+    
+    :param data: pandas DataFrame
+  
+    print("\n--- Findings & Observations ---")
+    print("1. Data shape: ", data.shape)
+    print("2. Potential missing data in columns:")
+    print(data.isnull().sum()[data.isnull().sum() > 0])
+    print("3. Strong correlations (if any):")
+    corr = data.corr()
+    high_corr = corr[(corr > 0.7) & (corr != 1)].stack()
+    print(high_corr)
+if __name__ == "__main__":
+    # Specify your dataset file path
+    file_path = 'your_dataset.csv'  # Replace with your dataset's path
+    data = load_data(file_path)
+
+    explore_data(data)
+    basic_analysis(data)
+    create_visualizations(data)
+    print_findings(data)
